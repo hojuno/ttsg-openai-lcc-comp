@@ -1,24 +1,4 @@
-'''
-Class implementing TTS generation using OpenAI TTS service.
-'''
-
-from dotenv import load_dotenv
-load_dotenv()
 import openai
-
-with openai.audio.speech.with_streaming_response.create(
-    model="tts-1",
-    voice="alloy",
-    response_format="pcm",  # similar to WAV, but without a header chunk at the start.
-    input="""I see skies of blue and clouds of white
-            The bright blessed days, the dark sacred nights
-            And I think to myself
-            What a wonderful world""",
-) as response:
-    for chunk in response.iter_bytes(chunk_size=1024):
-        print(chunk)
-
-from openai import OpenAI
 import logging
 
 class OpenAITTSModel():
