@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 '''
 Supported component type entrypoints
 
@@ -9,23 +12,58 @@ You may also simply return the final result
 '''
 
 import os
+from typing import Tuple
 from .model import OpenAITTSModel
+import logging
 ttsg_model = OpenAITTSModel(os.getenv('MODEL'), os.getenv('VOICE'))
 
-# For speech-to-text models
-def start_stt(audio: bytes) -> str:
-    raise NotImplementedError
 
-# For text generation models
-def start_t2t(system_prompt: str, user_input: str) -> str:
-    raise NotImplementedError
+from jaison_grpc.common import STTComponentRequest, T2TComponentRequest, TTSGComponentRequest, TTSCComponentRequest
+async def request_unpacker(request_iterator):
+    async for request_o in request_iterator:
+        match request_o:
+            case STTComponentRequest():
+                yield request_o.audio, request_o.sample_rate, request_o.sample_width, request_o.channels
+            case T2TComponentRequest():
+                yield request_o.system_input, request_o.user_input
+            case TTSGComponentRequest():
+                yield request_o.content
+            case TTSCComponentRequest():
+                yield request_o.audio, request_o.sample_rate, request_o.sample_width, request_o.channels
+            case _:
+                raise Exception(f"Unknown request type: {type(request_o)}")
+
+def is_sentence(sentence):
+    return sentence.endswith('.')
 
 # For text-to-speech generation
-def start_ttsg(text: str) -> bytes:
+async def start_ttsg(request_iterator):
     global ttsg_model
-    for audio_chunk in ttsg_model(text):
-        yield audio_chunk
+    sentence = ""
+    async for content in request_unpacker(request_iterator): # receiving chunks of info through a stream
+        logging.debug(f"got content chunk: {content}")
+        sentence += content
+        if is_sentence(sentence):
+            logging.debug(f" processing sentence: {sentence}")
+            for audio_chunk in ttsg_model(sentence):
+                yield audio_chunk, 24000, 2, 1
+            sentence = ""
+    if len(sentence) > 0:
+        for audio_chunk in ttsg_model(sentence):
+            logging.debug(f" processing sentence: {sentence}")
+            yield audio_chunk, 24000, 2, 1
+
+# For speech-to-text models
+async def start_stt(request_iterator) -> str:
+    for audio, sample_rate, sample_width, channels in request_unpacker(request_iterator): # receiving chunks of info through a stream
+        raise NotImplementedError
+
+# For text generation models
+async def start_t2t(request_iterator) -> str:
+    for system_input, user_input in request_unpacker(request_iterator): # receiving chunks of info through a stream
+        raise NotImplementedError
 
 # For voice changers
-def start_ttsc(audio: bytes) -> bytes:
-    raise NotImplementedError
+async def start_ttsc(request_iterator) -> str:
+    for audio, sample_rate, sample_width, channels in request_unpacker(request_iterator): # receiving chunks of info through a stream
+        raise NotImplementedError

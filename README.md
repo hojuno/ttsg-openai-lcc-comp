@@ -7,7 +7,7 @@ Uses [OpenAI's Python SDK](https://github.com/openai/openai-python) to convert t
 
 Windows
 ```
-conda create -n jaison-comp-ttsg-openai-api python=3.12
+conda create -n jaison-comp-ttsg-openai-api python=3.12 ffmpeg
 conda activate jaison-comp-ttsg-openai-api
 pip install -r requirements.txt
 ```

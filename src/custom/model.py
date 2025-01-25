@@ -1,5 +1,6 @@
 import openai
 import logging
+import os
 
 class OpenAITTSModel():
     def __init__(self, model_name, voice_name):
