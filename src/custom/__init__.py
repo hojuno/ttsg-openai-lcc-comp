@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dotenv_path='e:\env\jaison-core.env.txt')
 
 '''
 Supported component type entrypoints
@@ -11,11 +11,10 @@ To support streaming, your implementation should be a generator: https://wiki.py
 You may also simply return the final result
 '''
 
-import os
-from typing import Tuple
 from .model import OpenAITTSModel
 import logging
-ttsg_model = OpenAITTSModel(os.getenv('MODEL'), os.getenv('VOICE'))
+from .config import config
+ttsg_model = OpenAITTSModel(config['model'], config['voice'])
 
 
 from jaison_grpc.common import STTComponentRequest, T2TComponentRequest, TTSGComponentRequest, TTSCComponentRequest
@@ -49,8 +48,8 @@ async def start_ttsg(request_iterator):
                 yield audio_chunk, 24000, 2, 1
             sentence = ""
     if len(sentence) > 0:
+        logging.debug(f" processing sentence: {sentence}")
         for audio_chunk in ttsg_model(sentence):
-            logging.debug(f" processing sentence: {sentence}")
             yield audio_chunk, 24000, 2, 1
 
 # For speech-to-text models
