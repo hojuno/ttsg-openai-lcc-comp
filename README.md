@@ -22,9 +22,11 @@ pip install -r requirements.txt
 Furthermore, create a `.env` file in the root of this project with the following:
 ```
 OPENAI_API_KEY=<openai api key like sk-...>
-MODEL=<name of model like tts-1>
-VOICE=<name of voice like alloy>
 ```
+You can find you OpenAI API token [here](https://platform.openai.com/api-keys) as shown below:
+
+<img src="./assets/openai_1.png" alt="openai api token location 1" height="200"/>
+<img src="./assets/openai_2.png" alt="openai api token location 2" height="200"/>
 
 ## Testing
 Assuming you are in the right virtual environment and are in the root directory:
@@ -34,7 +36,7 @@ python ./src/main.py --port=5000
 If it runs, it should be fine.
 
 ## Configuration
-There is no configuration.
+In `config.json`, you can set your desired voice model and voice as listed [by OpenAI](https://platform.openai.com/docs/guides/text-to-speech).
 
 ## Related stuff
 Project J.A.I.son: https://github.com/limitcantcode/jaison-core

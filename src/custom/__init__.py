@@ -40,15 +40,15 @@ async def start_ttsg(request_iterator):
     global ttsg_model
     sentence = ""
     async for content in request_unpacker(request_iterator): # receiving chunks of info through a stream
-        logging.debug(f"got content chunk: {content}")
+        logging.debug(f"Got content chunk: {content}")
         sentence += content
         if is_sentence(sentence):
-            logging.debug(f" processing sentence: {sentence}")
+            logging.debug(f"Processing sentence: {sentence}")
             for audio_chunk in ttsg_model(sentence):
                 yield audio_chunk, 24000, 2, 1
             sentence = ""
     if len(sentence) > 0:
-        logging.debug(f" processing sentence: {sentence}")
+        logging.debug(f"Processing sentence: {sentence}")
         for audio_chunk in ttsg_model(sentence):
             yield audio_chunk, 24000, 2, 1
 
