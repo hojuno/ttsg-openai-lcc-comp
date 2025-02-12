@@ -36,7 +36,7 @@ python ./src/main.py --port=5000
 If it runs, it should be fine.
 
 ## Configuration
-In `config.json`, you can set your desired voice model and voice as listed [by OpenAI](https://platform.openai.com/docs/guides/text-to-speech).
+In `config.json`, you can set your desired voice model and voice as listed [by OpenAI](https://platform.openai.com/docs/guides/text-to-speech). Also set `env` to the filepath to your `.env` file.
 
 ## Related stuff
 Project J.A.I.son: https://github.com/limitcantcode/jaison-core

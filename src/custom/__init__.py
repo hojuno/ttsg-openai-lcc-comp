@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
-load_dotenv(dotenv_path='e:\env\jaison-core.env.txt')
+from .config import config
+load_dotenv(dotenv_path=config['env'])
 
 '''
 Supported component type entrypoints
@@ -13,9 +14,7 @@ You may also simply return the final result
 
 from .model import OpenAITTSModel
 import logging
-from .config import config
 ttsg_model = OpenAITTSModel(config['model'], config['voice'])
-
 
 from jaison_grpc.common import STTComponentRequest, T2TComponentRequest, TTSGComponentRequest, TTSCComponentRequest
 async def request_unpacker(request_iterator):
